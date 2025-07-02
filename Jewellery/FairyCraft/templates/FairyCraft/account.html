@@ -1,0 +1,195 @@
+<!-- account.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Аккаунт</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'style/account.css' %}" type="text/css">
+</head>
+<body>
+    <main class="main-content">
+        <!-- Шапка -->
+        <div class="header">
+            <nav class="header-nav">
+                <a href="/">Главная</a>
+                <a href="/catalog/">Каталог</a>
+                <a href="/masters/">Мастера</a>
+                <a href="/account/">Аккаунт</a>
+            </nav>
+        </div>
+        <div class="header-line"></div>
+
+        <!-- Оверлей -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Модальное окно Авторизации -->
+        <div class="modal login" id="loginModal">
+            <h2>Авторизация</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error-msg">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <label for="mail_address">Email</label>
+                <input type="email" id="mail_address" name="mail_address" placeholder="Введите email" required>
+                <label for="us_password">Пароль</label>
+                <input type="password" id="us_password" name="us_password" placeholder="Введите пароль" required>
+                <button type="submit">Войти</button>
+            </form>
+            <div class="switch-link" id="toRegister">Нет аккаунта? Регистрация</div>
+        </div>
+
+        <!-- Модальное окно Регистрации -->
+        <div class="modal register" id="registerModal">
+            <h2>Регистрация</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error-msg">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="reg_mail_address">Email</label>
+                <input type="email" id="reg_mail_address" name="mail_address" placeholder="Введите email" required>
+                <label for="reg_us_password">Пароль</label>
+                <input type="password" id="reg_us_password" name="us_password" placeholder="Введите пароль" required>
+                <label for="reg_us_surname">Фамилия</label>
+                <input type="text" id="reg_us_surname" name="us_surname" placeholder="Введите фамилию" required>
+                <label for="reg_us_name">Имя</label>
+                <input type="text" id="reg_us_name" name="us_name" placeholder="Введите имя" required>
+                <label for="reg_phone_num">Телефон</label>
+                <input type="text" id="reg_phone_num" name="phone_num" placeholder="Введите телефон" required>
+                <label for="reg_us_img">Фото</label>
+                <input type="file" id="reg_us_img" name="us_img">
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+            <div class="switch-link" id="toLogin">Уже есть аккаунт? Войти</div>
+        </div>
+
+        <!-- Страница аккаунта -->
+        <div class="account-container" id="accountPage">
+  <div class="account-left">
+    <img src="{{ user.us_img.url|default:'https://randomuser.me/api/portraits/women/65.jpg' }}" alt="Фото пользователя" />
+  </div>
+  <div class="account-right">
+    <div class="account-info"><b>Имя:</b> {{ user.us_name }} {{ user.us_surname }}</div>
+    <div class="account-info"><b>Почта:</b> {{ user.mail_address }}</div>
+    <div class="account-info"><b>Телефон:</b> {{ user.phone_num }}</div>
+    <div class="orders-section">
+      <h3>История заказов</h3>
+      {% for order in orders %}
+        <div class="order-item">
+          Заказ #{{ order.order_id }} — <span class="order-status">{{ order.status }}</span>
+        </div>
+      {% empty %}
+        <p>У вас пока нет заказов.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+    </main>
+
+    <!-- Ваш JS-скрипт -->
+    <script>
+    // Показать модалку
+  function showModal(modal) {
+    overlay.classList.add('active');
+    modal.classList.add('active');
+  }
+  // Скрыть все модалки
+  function hideModals() {
+    overlay.classList.remove('active');
+    loginModal.classList.remove('active');
+    registerModal.classList.remove('active');
+  }
+  // Показать страницу аккаунта
+  function showAccount(user) {
+    hideModals();
+    overlay.classList.remove('active');
+    accountPage.classList.add('active');
+    // Заполнить данные
+    accountPage.querySelector('.account-left img').src = user.photo;
+    accountPage.querySelector('.account-right').innerHTML = `
+      <div class="account-info"><b>Имя:</b> ${user.name}</div>
+      <div class="account-info"><b>Почта:</b> ${user.email}</div>
+      <div class="account-info"><b>Телефон:</b> ${user.phone}</div>
+      <div class="orders-section">
+        <h3>История заказов</h3>
+        <div class="order-item">Заказ #001 — <span class="order-status">Выполнен</span></div>
+        <div class="order-item">Заказ #002 — <span class="order-status">В обработке</span></div>
+      </div>
+    `;
+  }
+
+  // Проверка авторизации при загрузке
+  window.addEventListener('load', () => {
+  // При загрузке всегда показываем оба окна — авторизации и регистрации
+  showModal(loginModal);
+  registerModal.classList.add('active');
+});
+
+
+  // Переключение на регистрацию
+  toRegister.addEventListener('click', () => {
+    loginModal.classList.remove('active');
+    registerModal.classList.add('active');
+  });
+  // Переключение на авторизацию
+  toLogin.addEventListener('click', () => {
+    registerModal.classList.remove('active');
+    loginModal.classList.add('active');
+  });
+
+  // Клик по оверлею закрывает модалки (только если аккаунт не показан)
+  overlay.addEventListener('click', () => {
+    if (!accountPage.classList.contains('active')) {
+      hideModals();
+      showModal(loginModal);
+    }
+  });
+
+  // Логика авторизации
+  loginBtn.addEventListener('click', () => {
+    const loginVal = loginUser.value.trim();
+    const passVal = loginPass.value.trim();
+    loginError.textContent = '';
+
+    if (!loginVal || !passVal) {
+      loginError.textContent = 'Пожалуйста, заполните все поля';
+      return;
+    }
+
+    const user = usersDB.find(u => u.login === loginVal && u.password === passVal);
+    if (user) {
+      // Сохраняем в localStorage
+      localStorage.setItem('loggedUser', JSON.stringify(user));
+      showAccount(user);
+    } else {
+      loginError.textContent = 'Неверный логин или пароль';
+    }
+  });
+
+  // Логика регистрации (упрощённая)
+  registerBtn.addEventListener('click', () => {
+    const loginVal = regUser.value.trim();
+    const emailVal = regEmail.value.trim();
+    const passVal = regPass.value.trim();
+    registerError.textContent = '';
+
+    if (!loginVal || !emailVal || !passVal) {
+      registerError.textContent = 'Пожалуйста, заполните все поля';
+      return;
+    }
+    // Здесь можно добавить проверку email, пароля и регистрацию на сервере
+    alert('Регистрация прошла успешно! Теперь войдите в систему.');
+    registerModal.classList.remove('active');
+    loginModal.classList.add('active');
+  });
+</script>
+</body>
+</html>

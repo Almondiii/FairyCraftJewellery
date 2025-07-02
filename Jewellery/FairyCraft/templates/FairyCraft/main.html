@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ювелирный магазин</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style/main.css' %}" type="text/css">
+</head>
+<body>
+    <!-- Шапка -->
+    <div class="header">
+        <nav class="header-nav">
+            <a href="{% url 'main' %}">Главная</a>
+            <a href="{% url 'katalog' %}">Каталог</a>
+        </nav>
+        <div class="header-logo">
+            <img src="{% static 'img/лого.png' %}" alt="Логотип" class="logo-img">
+        </div>
+        <nav class="header-nav">
+            <a href="{% url 'mastera' %}">Мастера</a>
+            <a href="{% url 'account' %}">Аккаунт</a>
+        </nav>
+    </div>
+    <div class="header-line"></div>
+
+    <!-- Первый блок -->
+    <div class="main-block">
+        <div class="main-block-left">
+            <div class="main-block-title">FairyCraft</div>
+            <div class="main-block-title">Jewellery</div>
+            <div class="main-block-subtitle">ювелирный магазин</div>
+            <a href="{% url 'katalog' %}"><button>перейти в каталог</button></a>
+        </div>
+        <div class="main-block-right">
+            <img src="{% static 'img/кольерозовое.png' %}" alt="Украшение" class="main-block-img">
+        </div>
+    </div>
+    <div class="main-block-line"></div>
+
+    <!-- Второй блок -->
+    <div class="slogan-block">
+        <div class="slogan-text">волшебство в каждом украшении</div>
+        <div class="slogan-line"></div>
+    </div>
+
+    <!-- Третий блок: новинки (вывод из БД) -->
+    <div class="new-block">
+        <div class="new-block-header">
+            <div class="new-block-title">новинки</div>
+            <a href="{% url 'katalog' %}"><button class="new-block-more">смотреть больше</button></a>
+        </div>
+        <div class="product-cards">
+            {% for item in jewellery_list %}
+                <div class="product-card">
+                    {% if item.jewellery_img %}
+                        <img src="{{ item.jewellery_img.url }}" alt="{{ item.jewellery_name }}" class="product-img">
+                    {% else %}
+                        <img src="{% static 'img/default.png' %}" alt="Нет изображения" class="product-img">
+                    {% endif %}
+                    <div class="product-title">{{ item.jewellery_name }}</div>
+                    <div class="product-price">{{ item.jewellery_price|floatformat:"0" }} ₽</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer-cols">
+            <div class="footer-col">
+                <a href="{% url 'main' %}">Главная</a>
+                <a href="{% url 'katalog' %}">Каталог</a>
+                <a href="{% url 'mastera' %}">Мастера</a>
+                <a href="{% url 'account' %}">Аккаунт</a>
+            </div>
+            <div class="footer-col">
+                <a href="#">Поддержка</a>
+                <a href="#">Контакты</a>
+            </div>
+        </div>
+        <div class="footer-logo">
+            <img src="{% static 'img/лого.png' %}" alt="Логотип" class="logo-img">
+        </div>
+    </footer>
+</body>
+</html>

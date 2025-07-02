@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мастера</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style/mastera.css' %}" type="text/css">
+</head>
+<main class="main-content">
+<body>
+    <!-- Шапка -->
+    <div class="header">
+        <nav class="header-nav">
+            <a href="{% url 'main' %}">Главная</a>
+            <a href="{% url 'katalog' %}">Каталог</a>
+        </nav>
+        <div class="header-logo">
+            <img src="{% static 'img/лого.png' %}" alt="Логотип" class="logo-img">
+        </div>
+        <nav class="header-nav">
+            <a href="{% url 'mastera' %}">Мастера</a>
+            <a href="{% url 'account' %}">Аккаунт</a>
+        </nav>
+    </div>
+    <div class="header-line"></div>
+
+    <!-- Блок мастеров -->
+    <div class="masters-section">
+        {% for master in mastera_list %}
+        <div class="master-card" data-master="{{ master.ID_user }}">
+            <div class="master-info">
+                <div class="master-name">{{ master.us_name }} {{ master.us_surname }}</div>
+                <div class="master-exp">Опыт: {{ master.in_job }}</div>
+                <button class="master-btn" data-master-id="{{ master.ID_user }}">Изделия</button>
+            </div>
+            <img src="{{ master.us_img }}" alt="{{ master.us_name }}" class="master-photo">
+        </div>
+        <div class="products-list" id="products-{{ master.ID_user }}"></div>
+        {% endfor %}
+        <div class="section-line"></div>
+    </div>
+    
+</main>
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer-cols">
+            <div class="footer-col">
+                <a href="{% url 'main' %}">Главная</a>
+                <a href="{% url 'katalog' %}">Каталог</a>
+                <a href="{% url 'mastera' %}">Мастера</a>
+                <a href="{% url 'account' %}">Аккаунт</a>
+            </div>
+            <div class="footer-col">
+                <a href="#">Поддержка</a>
+                <a href="#">Контакты</a>
+            </div>
+        </div>
+        <div class="footer-logo">
+            <img src="{% static 'img/лого.png' %}" alt="Логотип" class="logo-img">
+        </div>
+    </footer>
+    
+        <script>
+            document.querySelectorAll('.master-card').forEach(card => {
+                const masterId = card.dataset.master;
+                const btn = card.querySelector('.master-btn');
+                const productsBlock = document.getElementById('products-' + masterId);
+            
+                btn.addEventListener('click', async function() {
+                    // Скрыть все списки изделий
+                    document.querySelectorAll('.products-list').forEach(pl => {
+                        pl.classList.remove('active');
+                        pl.innerHTML = '';
+                    });
+            
+                    // Если уже открыт — закрыть, иначе открыть и загрузить изделия
+                    if (productsBlock.classList.contains('active')) {
+                        productsBlock.classList.remove('active');
+                        productsBlock.innerHTML = '';
+                    } else {
+                        try {
+                            // Запрос к API Django
+                            const response = await fetch(`/api/master/${masterId}/products/`);
+                            const data = await response.json();
+            
+                            // Формируем HTML для изделий мастера
+                            productsBlock.innerHTML = data.products.map(p => `
+                                <div class="product-row">
+                                    <img src="${p.jewellery_img}" alt="${p.jewellery_name}" class="product-row-img">
+                                    <div class="product-row-info">
+                                        <div class="product-row-title">${p.jewellery_name}</div>
+                                        <div class="product-row-master">Мастер: ${p.User__us_name}</div>
+                                        <div class="product-row-price">${p.jewellery_price}</div>
+                                        <a href="{% url 'chek' %}" class="product-row-btn">Заказать</a>
+                                    </div>
+                                </div>
+                            `).join('');
+                            productsBlock.classList.add('active');
+                        } catch (error) {
+                            console.error('Ошибка загрузки изделий:', error);
+                            productsBlock.innerHTML = '<div class="error">Не удалось загрузить изделия</div>';
+                        }
+                    }
+                });
+            });
+            </script>            
+</body>
+</html>

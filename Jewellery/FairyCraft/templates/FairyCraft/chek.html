@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <title>Оформление заказа</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style/chek.css' %}" type="text/css">
+</head>
+<body>
+
+    <!-- Шапка -->
+    <div class="header">
+      <nav class="header-nav">
+          <a href="{% url 'main' %}">Главная</a>
+          <a href="{% url 'katalog' %}">Каталог</a>
+      </nav>
+      <div class="header-logo">
+          <img src="{% static 'img/лого.png' %}" alt="Логотип" class="logo-img">
+      </div>
+      <nav class="header-nav">
+          <a href="{% url 'mastera' %}">Мастера</a>
+          <a href="{% url 'account' %}">Аккаунт</a>
+      </nav>
+  </div>
+  <div class="header-line"></div>
+
+    <!-- Основной контент -->
+    <main>
+        <!-- Левая колонка: форма заказа -->
+        <form class="order-form" method="post" novalidate>
+            {% csrf_token %}
+            {% if message %}
+                <div class="alert">{{ message }}</div>
+            {% endif %}
+            <!-- Заказ -->
+            <section class="order-section">
+                <h2>Заказ</h2>
+                <div class="two-columns">
+                    <div>
+                        {{ form.first_name.label_tag }}
+                        {{ form.first_name }}
+                    </div>
+                    <div>
+                        {{ form.last_name.label_tag }}
+                        {{ form.last_name }}
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div>
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+                    <div>
+                        {{ form.phone.label_tag }}
+                        {{ form.phone }}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Адрес доставки -->
+            <section class="order-section">
+                <h2>Адрес доставки</h2>
+                <div class="two-columns">
+                    <div>
+                        {{ form.country.label_tag }}
+                        {{ form.country }}
+                    </div>
+                    <div>
+                        {{ form.city.label_tag }}
+                        {{ form.city }}
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div>
+                        {{ form.street.label_tag }}
+                        {{ form.street }}
+                    </div>
+                    <div>
+                        {{ form.apartment.label_tag }}
+                        {{ form.apartment }}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Доставка -->
+            <section class="order-section">
+                <h2>Доставка</h2>
+                <div class="delivery-options">
+                    {% for radio in form.delivery %}
+                        <div class="delivery-option">
+                            {{ radio }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Оплата -->
+            <section class="order-section">
+                <h2>Оплата</h2>
+                <div class="payment-fields">
+                    <div>
+                        {{ form.card_number.label_tag }}
+                        {{ form.card_number }}
+                    </div>
+                    <div>
+                        {{ form.expiry_date.label_tag }}
+                        {{ form.expiry_date }}
+                    </div>
+                    <div>
+                        {{ form.cvv.label_tag }}
+                        {{ form.cvv }}
+                    </div>
+                </div>
+                <button type="submit" class="order-btn">Заказать</button>
+            </section>
+        </form>
+
+        <!-- Правая колонка: карточка товара и итоги -->
+        <aside class="order-summary">
+            <div class="product-card">
+                {% if jewellery %}
+                    {% if jewellery.jewellery_img %}
+                        <img src="{{ jewellery.jewellery_img.url }}" alt="{{ jewellery.jewellery_name }}" class="product-img">
+                    {% else %}
+                        <img src="{% static 'жемчужноеколье.png' %}" alt="{{ jewellery.jewellery_name }}" class="product-img">
+                    {% endif %}
+                    <div class="product-info">
+                        <div class="product-name">{{ jewellery.jewellery_name }}</div>
+                        <div class="product-price" id="productPrice">{{ jewellery.jewellery_price|floatformat:"0" }} ₽</div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="price-row">
+                <div>Доставка</div>
+                <div id="deliveryPrice">0 ₽</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="price-row total">
+                <div>Всего</div>
+                <div id="totalPrice">{{ jewellery.jewellery_price|floatformat:"0" }} ₽</div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+      <div class="footer-cols">
+          <div class="footer-col">
+              <a href="{% url 'main' %}">Главная</a>
+              <a href="{% url 'katalog' %}">Каталог</a>
+              <a href="{% url 'mastera' %}">Мастера</a>
+              <a href="{% url 'account' %}">Аккаунт</a>
+          </div>
+          <div class="footer-col">
+              <a href="#">Поддержка</a>
+              <a href="#">Контакты</a>
+          </div>
+      </div>
+      <div class="footer-logo">
+          <img src="{% static 'img/лого.png' %}" alt="Логотип" class="logo-img">
+      </div>
+  </footer>
+
+    <script>
+        // Элементы для цены доставки и итога
+        const deliveryRadios = document.querySelectorAll('input[name="delivery"]');
+        const deliveryPriceEl = document.getElementById('deliveryPrice');
+        const totalPriceEl = document.getElementById('totalPrice');
+        const productPriceEl = document.getElementById('productPrice');
+
+        // Парсим цену товара из текста, например "6900 ₽"
+        function parsePrice(text) {
+            return Number(text.replace(/\D/g, ''));
+        }
+        // Форматируем цену с пробелами и ₽
+        function formatPrice(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+        }
+
+        // Обновляем итоговую цену
+        function updateTotal() {
+            const productPrice = parsePrice(productPriceEl.textContent);
+            let deliveryCost = 0;
+            const selected = document.querySelector('input[name="delivery"]:checked');
+            if (selected) {
+                deliveryCost = selected.value === 'express' ? 500 : 0;
+            }
+            deliveryPriceEl.textContent = formatPrice(deliveryCost);
+            totalPriceEl.textContent = formatPrice(productPrice + deliveryCost);
+        }
+
+        // Слушаем изменения доставки
+        deliveryRadios.forEach(radio => {
+            radio.addEventListener('change', updateTotal);
+        });
+
+        // Инициализация
+        updateTotal();
+    </script>
+
+</body>
+</html>

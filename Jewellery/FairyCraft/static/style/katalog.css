@@ -1,0 +1,300 @@
+body {
+    margin: 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    background: rgba(255, 252, 240, 1);
+    color: #222;
+}
+/* Шапка */
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    padding: 24px 0 18px 0;
+    position: relative;
+}
+.header-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+}
+.logo-img {
+    height: 50px;
+    width: auto;
+    display: block;
+}
+.header-nav {
+    display: flex;
+    gap: 30px;
+    font-size: 1.1em;
+}
+.header-nav a {
+    text-decoration: none;
+    color: #222;
+    transition: color 0.2s;
+}
+.header-nav a:hover {
+    color:  rgba(237, 179, 184, 1);
+}
+.header-line {
+    height: 2px;
+    background: #000;
+    width: 100%;
+}
+
+/* Первый блок: Поиск и фильтры */
+.search-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 38px;
+    position: relative;
+}
+.search-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 2px solid  rgba(237, 179, 184, 1);
+    border-radius: 30px;
+    padding: 7px 18px;
+    min-width: 350px;
+    max-width: 420px;
+    background: #fff;
+    position: relative;
+}
+.search-bar input {
+    border: none;
+    outline: none;
+    font-size: 1.08em;
+    background: transparent;
+    width: 220px;
+    font-family: inherit;
+    color: #222;
+}
+.search-bar input::placeholder {
+    color: rgba(237, 179, 184, 1);
+    opacity: 1;
+    font-size: 1em;
+}
+.search-icon {
+    margin-left: 10px;
+    color:  rgba(237, 179, 184, 1);
+    font-size: 1.3em;
+    cursor: pointer;
+}
+/* Кнопка фильтра */
+.filter-btn {
+    width: 38px;
+    height: 38px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    z-index: 2;
+}
+.filter-icon, .close-icon {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px; height: 38px;
+    transition: opacity 0.25s;
+}
+.close-icon {
+    opacity: 0;
+}
+.filter-btn.active .filter-icon {
+    opacity: 0;
+}
+.filter-btn.active .close-icon {
+    opacity: 1;
+}
+/* Фильтр-панель */
+.filter-panel {
+    display: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+    background: #fff;
+    border: 2px solid  rgba(237, 179, 184, 1);
+    border-radius: 18px;
+    padding: 18px 24px;
+    min-width: 340px;
+    box-shadow: 0 4px 18px #f5e0e6;
+    z-index: 1;
+}
+.filter-panel.active {
+    display: flex;
+    animation: fadeIn 0.2s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-8px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+.filter-tag {
+    border: 2px solid  rgba(237, 179, 184, 1);
+    border-radius: 18px;
+    padding: 7px 18px;
+    font-size: 1em;
+    color:  rgba(237, 179, 184, 1);
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    user-select: none;
+}
+.filter-tag.selected {
+    background:  rgb(240, 123, 133);;
+    color: #fff;
+    border-color:  rgba(237, 179, 184, 1);
+}
+.filter-tag .close-filter {
+    margin-left: 8px;
+    font-size: 1.1em;
+    vertical-align: middle;
+    cursor: pointer;
+}
+.search-block .header-line {
+    margin-top: 32px;
+}
+
+/* Второй блок: Новинки и Бестселлеры */
+.section {
+    margin: 36px auto 0 auto;
+    max-width: 620px;
+    padding: 0 4vw;
+}
+.section-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-bottom: 18px;
+    text-align: left;
+}
+.product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-bottom: 30px;
+}
+.product-row {
+    display: flex;
+    background:  rgba(255, 252, 240, 1);;
+    border-radius: 16px;
+    
+    padding: 12px 18px;
+    gap: 18px;
+    align-items: center;
+}
+.product-row-img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+.product-row-info {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex: 1;
+}
+.product-row-title {
+    font-size: 1.08em;
+    font-weight: 600;
+}
+.product-row-master {
+    font-size: 0.98em;
+    color: #888;
+}
+.product-row-price {
+    font-size: 1.08em;
+    color:  rgba(237, 179, 184, 1);
+    font-weight: 500;
+}
+.product-row-btn {
+    align-self: flex-start;
+    margin-top: 6px;
+    background:  rgba(237, 179, 184, 1);
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    padding: 7px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: underline;
+}
+.product-row-btn:hover {
+    background:  rgb(240, 123, 133);
+}
+.section-line {
+    height: 2px;
+    background: #000;
+    width: 100%;
+    margin: 32px 0 0 0;
+}
+
+/* Подвал */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: #f3f0fa;
+    padding: 32px 4vw 18px 4vw;
+    margin-top: 32px;
+    border-top: 2px solid #000;
+}
+.footer-cols {
+    display: flex;
+    gap: 60px;
+}
+.footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.footer-col a {
+    color: #222;
+    text-decoration: none;
+    font-size: 1em;
+    transition: color 0.2s;
+}
+.footer-col a:hover {
+    color:  rgba(237, 179, 184, 1);
+}
+.footer-logo {
+    font-size: 1.3em;
+    font-weight: bold;
+    letter-spacing: 2px;
+    align-self: flex-end;
+}
+
+@media (max-width: 700px) {
+    .section {
+        max-width: 98vw;
+        padding: 0 2vw;
+    }
+    .product-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+    }
+    .footer-logo {
+        align-self: flex-start;
+    }
+}
